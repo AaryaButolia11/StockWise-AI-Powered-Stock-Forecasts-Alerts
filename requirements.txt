@@ -1,0 +1,10 @@
+Flask==2.3.2
+pandas==2.2.2
+numpy==1.26.4
+matplotlib==3.8.4
+prophet==1.1.5
+mysql-connector-python==8.3.0
+gunicorn==21.2.0  # Optional: for production deployment
+requests==2.31.0  # For API calls (e.g., Polygon.io, Twilio)
+python-dotenv==1.0.1  # For loading environment variables
+pip install prophet --no-cache-dir
