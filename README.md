@@ -20,7 +20,7 @@ This Flask-based web application allows users to select a US stock out of S&P 50
   - Modular code for forecasting and visualization.
 
 ## 🛠 Tech Stack
-👨‍💻 Backend
+👨‍💻 **Backend**
 Python 3.x
 
 Flask – Lightweight Python web framework for routing, templates, and API handling.
