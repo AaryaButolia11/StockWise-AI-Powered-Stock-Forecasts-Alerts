@@ -1,6 +1,6 @@
 # 📈 Stock Forecast & SMS Alert Web App
 
-This Flask-based web application allows users to select a US stock, enter their phone number, and receive daily SMS or WhatsApp alerts with price updates and news. It also provides interactive stock price forecasts for the next 6 months (monthly average) or next 5 years (yearly average) using Facebook's Prophet forecasting model.
+This Flask-based web application allows users to select a US stock out of S&P 500 stocks, enter their phone number, and receive daily SMS or WhatsApp alerts with price updates and news. It also provides interactive stock price forecasts for the next 6 months (monthly average) or next 5 years (yearly average) using Facebook's Prophet forecasting model.
 
 ## 🚀 Features
 
