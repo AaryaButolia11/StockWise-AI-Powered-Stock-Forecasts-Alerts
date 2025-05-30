@@ -25,7 +25,7 @@ This Flask-based web application allows users to select a US stock, enter their 
 - **API Integration**: Polygon.io, Twilio
 - **Plotting**: Matplotlib (rendered server-side)
 
-## Woring Video
+## Working Video
 
 
 
@@ -47,6 +47,13 @@ https://github.com/user-attachments/assets/59d82a63-b9d5-46f2-91a2-110610fb9ee0
 
 ### SMS service for stock price
 ![Screenshot 2025-05-30 134725](https://github.com/user-attachments/assets/885cd53b-7d25-4b3d-82ff-9a95946b56e2)
+
+
+### Message received for updates
+
+![WhatsApp Image 2025-05-30 at 17 25 11_a55ca7bc](https://github.com/user-attachments/assets/4fee3794-affe-46a9-8a76-76d22a92fe70)
+
+
 
 <!-- Replace with actual image if hosted -->
 
