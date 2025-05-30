@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockWise: AI-Powered Stock Forecasts & Alerts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="search-stock.svg" type="image/svg+xml" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      :root {
+        /* Refined Color Palette */
+        --color-primary-blue: #3b82f6; /* Tailwind blue-500 */
+        --color-primary-blue-dark: #2563eb; /* Tailwind blue-600 */
+        --color-accent-green: #10b981; /* Tailwind emerald-500 */
+        --color-accent-green-dark: #059669; /* Tailwind emerald-600 */
+        --color-text-dark: #1f2937; /* Tailwind gray-800 */
+        --color-text-medium: #4b5563; /* Tailwind gray-600 */
+        --color-text-light: #6b7280; /* Tailwind gray-500 */
+        --color-background-light: #f4f7fa; /* Very light blue-gray background */
+        --color-card-background: #ffffff;
+        --color-border: #e0e7ed; /* Soft blue-gray border */
+        --shadow-subtle: 0 4px 12px rgba(0, 0, 0, 0.04); /* Lighter, wider shadow */
+        --shadow-medium: 0 12px 30px rgba(0, 0, 0, 0.08); /* More prominent but still soft */
+        --gradient-blue-start: #3b82f6; /* Blue-500 */
+        --gradient-blue-end: #2563eb; /* Blue-600 */
+        --gradient-green-start: #10b981; /* Emerald-500 */
+        --gradient-green-end: #059669; /* Emerald-600 */
+        --gradient-alert-bg-start: #1f2937; /* Dark gray */
+        --gradient-alert-bg-end: #374151; /* Lighter dark gray */
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--color-background-light);
+        color: var(--color-text-dark);
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        color: var(--color-text-dark);
+      }
+      h1 span {
+        color: var(--color-primary-blue-dark);
+      }
+
+      .main-container {
+        border-radius: 2rem; /* More pronounced rounding */
+        box-shadow: var(--shadow-medium);
+        overflow: hidden;
+        background-color: var(
+          --color-card-background
+        ); /* Explicitly set main container background */
+        padding: 2.5rem; /* Adjust padding for overall spaciousness */
+      }
+      @media (min-width: 768px) {
+        .main-container {
+          padding: 3rem;
+        }
+      }
+      @media (min-width: 1024px) {
+        .main-container {
+          padding: 4rem;
+        }
+      }
+
+      .card {
+        background-color: var(--color-card-background);
+        border: 1px solid var(--color-border);
+        border-radius: 1.5rem;
+        box-shadow: var(--shadow-subtle);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        padding: 2rem; /* Default card padding */
+      }
+      .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.07);
+      }
+      .card-header {
+        color: var(--color-primary-blue-dark);
+        font-size: 1.8rem; /* Slightly larger for emphasis */
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+      }
+
+      /* Custom button base styles */
+      .btn-base {
+        @apply py-4 px-8 text-xl font-semibold transition transform duration-300 ease-in-out;
+        @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white;
+        @apply hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+        border-radius: 9999px; /* Pill shape */
+        min-height: 3.5rem; /* Ensure minimum height */
+      }
+
+      /* Primary button (Forecast 6M/5Y) */
+      /* Primary button (Forecast 6M/5Y) */
+      /* Primary button (Forecast 6M/5Y) */
+      /* Primary button (Forecast 6M/5Y) */
+      /* Primary button (Forecast 6M/5Y) */
+      .btn-primary {
+        background: linear-gradient(
+          to bottom right,
+          var(--gradient-blue-start),
+          var(--gradient-blue-end)
+        );
+        color: white; /* Explicitly set text color to white */
+        @apply hover:brightness-110 focus:ring-blue-500;
+        /* You can keep @apply text-white if you want, but 'color: white;' will override it */
+      }
+
+      /* Accent button (Set Alert) */
+      .btn-accent {
+        background: linear-gradient(
+          to bottom right,
+          var(--gradient-green-start),
+          var(--gradient-green-end)
+        );
+        @apply text-white hover:brightness-110 focus:ring-emerald-500;
+      }
+
+      /* Input/Select field styling */
+      .input-field {
+        @apply block w-full px-5 py-3 text-lg border border-gray-300 rounded-xl shadow-sm; /* Slightly softer border radius */
+        @apply focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition duration-300 ease-in-out;
+        color: var(--color-text-dark);
+        background-color: #fcfcfc;
+      }
+      .input-field:focus {
+        border-color: var(--color-primary-blue);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); /* Blue ring effect */
+      }
+
+      /* Flash messages (global) */
+      .flash-message {
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        font-weight: 600; /* Bolder for prominence */
+        box-shadow: var(--shadow-subtle);
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+      .flash-success {
+        background-color: #d1fae5;
+        color: #065f46;
+      }
+      .flash-error {
+        background-color: #fee2e2;
+        color: #991b1b;
+      }
+      .flash-info {
+        background-color: #e0f2fe;
+        color: #0f76af;
+      }
+
+      /* Alert Status message (contextual) */
+      .alert-status-message {
+        padding: 0.8rem 1.2rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        margin-top: 1.5rem;
+        transition: all 0.3s ease-in-out;
+      }
+      .alert-loading {
+        background-color: rgba(59, 130, 246, 0.1); /* Light blue bg */
+        color: var(--color-primary-blue-dark);
+      }
+      .alert-success {
+        background-color: rgba(16, 185, 129, 0.1); /* Light green bg */
+        color: var(--color-accent-green-dark);
+      }
+      .alert-error {
+        background-color: rgba(239, 68, 68, 0.1); /* Light red bg */
+        color: #ef4444; /* Tailwind red-500 */
+      }
+      .alert-info {
+        background-color: #f0f4f8;
+        color: var(--color-text-medium);
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fadeIn {
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+
+      @keyframes slideInUp {
+        from {
+          transform: translateY(30px) scale(0.95);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Modal styles */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(8px);
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+      }
+      .modal.show {
+        opacity: 1;
+      }
+      .modal-content {
+        background-color: var(--color-card-background);
+        padding: 3rem 2.5rem;
+        border-radius: 1.25rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+        max-width: 480px;
+        text-align: center;
+        position: relative;
+        transform: translateY(30px) scale(0.95);
+        opacity: 0;
+        animation: slideInUp 0.4s forwards cubic-bezier(0.2, 0.8, 0.2, 1.2);
+        border: 1px solid var(--color-border);
+      }
+      .modal.show .modal-content {
+        animation: slideInUp 0.4s forwards cubic-bezier(0.2, 0.8, 0.2, 1.2);
+      }
+      .modal-close-button {
+        position: absolute;
+        top: 1rem;
+        right: 1.5rem;
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        color: #a0aec0;
+        transition: color 0.2s ease-in-out;
+      }
+      .modal-close-button:hover {
+        color: #333;
+      }
+
+      /* Responsive Grid Layout for larger screens */
+      @media (min-width: 1024px) {
+        .main-grid {
+          display: grid;
+          grid-template-columns: 1fr 2fr; /* Stock Select / Alert vs. Forecast */
+          grid-template-rows: auto auto;
+          gap: 2.5rem;
+          grid-template-areas:
+            "select forecast"
+            "alert forecast";
+        }
+        #stock-selection-wrapper {
+          grid-area: select;
+        }
+        #forecast-section-wrapper {
+          grid-area: forecast;
+        }
+        #alert-section {
+          grid-area: alert;
+        }
+      }
+
+      /* Specific styling for the Alert Section background */
+      #alert-section.card {
+        background: linear-gradient(
+          135deg,
+          var(--gradient-alert-bg-start),
+          var(--gradient-alert-bg-end)
+        );
+        color: white; /* Ensure text is white on this dark background */
+        border: none; /* No border for the gradient card */
+        box-shadow: var(--shadow-medium); /* More pronounced shadow */
+      }
+      #alert-section h2 {
+        color: white; /* Ensure alert heading is white */
+      }
+      #alert-section .text-gray-200,
+      #alert-section .text-gray-400 {
+        color: #e2e8f0; /* Light gray for body text for better contrast */
+      }
+      #alert-section .input-field {
+        background-color: rgba(
+          255,
+          255,
+          255,
+          0.95
+        ); /* Slightly transparent white */
+        color: var(--color-text-dark);
+        border-color: transparent;
+      }
+      #alert-section .input-field:focus {
+        border-color: var(--color-primary-blue);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+      }
+      #alert-section label {
+        color: white; /* Make sure label is white */
+      }
+    </style>
+  </head>
+  <body class="p-4 md:p-8 lg:p-12">
+    <div class="main-container mx-auto">
+      <h1
+        class="text-4xl md:text-5xl font-extrabold text-center text-gray-900 mb-8 md:mb-12 leading-tight"
+      >
+        <span class="text-blue-600">StockWise:</span> AI-Powered Stock Forecasts
+        & Alerts
+      </h1>
+
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+        <div
+          class="flash-message flash-{{ category }} animate-fadeIn"
+          role="alert"
+        >
+          {% if category == 'success' %}
+          <i class="fas fa-check-circle mr-3 text-2xl"></i>
+          {% elif category == 'error' %}
+          <i class="fas fa-times-circle mr-3 text-2xl"></i>
+          {% elif category == 'info' %}
+          <i class="fas fa-info-circle mr-3 text-2xl"></i>
+          {% endif %} {{ message }}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+
+      <div class="main-grid grid grid-cols-1 gap-8 md:gap-10">
+        <div id="stock-selection-wrapper" class="card">
+          <h2 class="card-header">Select a Stock</h2>
+          <div class="mb-6">
+            <label
+              for="stock-select"
+              class="block text-base font-medium text-gray-700 mb-2 md:text-lg"
+              >Company Name or Symbol:</label
+            >
+            <select id="stock-select" class="input-field cursor-pointer">
+              <option value="">-- Select a Stock --</option>
+              {% for symbol, name in companies %}
+              <option value="{{ symbol }}">{{ name }} ({{ symbol }})</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div
+            id="current-stock-info"
+            class="hidden bg-blue-50 p-6 rounded-lg shadow-inner border border-blue-100 mt-6"
+          >
+            <h3 class="text-xl font-semibold text-blue-800 mb-3 border-b pb-2">
+              Current Stock Info:
+            </h3>
+            <p class="text-gray-700 mb-2">
+              <strong class="text-blue-600">Symbol:</strong>
+              <span id="current-symbol"></span>
+            </p>
+            <p class="text-gray-700 mb-2">
+              <strong class="text-blue-600">Company:</strong>
+              <span id="current-company"></span>
+            </p>
+            <p class="text-gray-700 font-bold text-xl mt-3">
+              <strong class="text-blue-600">Current Price:</strong>
+              $<span id="current-price"></span>
+            </p>
+          </div>
+          <div
+            id="current-stock-error"
+            class="hidden text-red-600 font-medium mt-4 p-3 bg-red-50 rounded-lg alert-status-message alert-error"
+          >
+            <i class="fas fa-exclamation-triangle mr-2"></i> Could not fetch
+            current stock information. Please try again.
+          </div>
+        </div>
+
+        <div id="forecast-section-wrapper" class="card">
+          <h2 class="card-header">Get Stock Forecast</h2>
+          <div class="mb-6 flex flex-col md:flex-row gap-4">
+            <button
+              id="forecast-6m-btn"
+              class="btn-base btn-primary flex-1"
+              disabled
+            >
+              <i class="fas fa-chart-line mr-2"></i> 6-Month Forecast
+            </button>
+            <button
+              id="forecast-5y-btn"
+              class="btn-base btn-primary flex-1"
+              disabled
+            >
+              <i class="fas fa-chart-area mr-2"></i> 5-Year Forecast
+            </button>
+          </div>
+
+          <div
+            id="loading-indicator"
+            class="hidden text-center font-semibold mt-6 alert-status-message alert-loading"
+          >
+            <i class="fas fa-spinner fa-spin mr-2"></i> Generating forecast...
+            This may take a moment.
+          </div>
+
+          <div
+            id="forecast-error"
+            class="hidden font-medium mt-6 alert-status-message alert-error"
+          >
+            <i class="fas fa-exclamation-circle mr-2"></i>
+            <span id="forecast-error-message"></span>
+          </div>
+
+          <div
+            id="forecast-results"
+            class="hidden bg-gray-50 p-6 rounded-lg shadow-inner border border-gray-100 mt-6 animate-fadeIn"
+          >
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">
+              Forecast Results:
+            </h3>
+            <div class="overflow-x-auto mb-6">
+              <table
+                class="min-w-full bg-white border border-gray-200 rounded-lg text-sm md:text-base"
+              >
+                <thead>
+                  <tr class="bg-gray-100 border-b border-gray-200">
+                    <th
+                      class="py-3 px-4 text-left text-base font-semibold text-gray-600 uppercase tracking-wider"
+                    >
+                      Date
+                    </th>
+                    <th
+                      class="py-3 px-4 text-left text-base font-semibold text-gray-600 uppercase tracking-wider"
+                    >
+                      Predicted Price
+                    </th>
+                    <th
+                      class="py-3 px-4 text-left text-base font-semibold text-gray-600 uppercase tracking-wider"
+                    >
+                      Lower Bound
+                    </th>
+                    <th
+                      class="py-3 px-4 text-left text-base font-semibold text-gray-600 uppercase tracking-wider"
+                    >
+                      Upper Bound
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="forecast-table-body"></tbody>
+              </table>
+            </div>
+            <div
+              id="plot-error"
+              class="hidden text-red-600 font-medium mt-4 alert-status-message alert-error"
+            >
+              <i class="fas fa-exclamation-triangle mr-2"></i> Could not
+              generate plot for this forecast.
+            </div>
+            <div class="mt-6 text-center">
+              <img
+                id="forecast-plot"
+                src=""
+                alt="Stock Price Forecast Plot"
+                class="max-w-full h-auto mx-auto rounded-lg shadow-md border border-gray-200"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div id="alert-section" class="card">
+          <h2 class="card-header text-white">Set Price Change Alert</h2>
+          <form
+            id="alert-form"
+            action="/"
+            method="POST"
+            class="max-w-lg mx-auto"
+          >
+            <input
+              type="hidden"
+              name="stock"
+              id="alert-stock-symbol"
+              value=""
+            />
+            <p class="text-lg mb-5 text-center text-gray-200">
+              Receive SMS/WhatsApp notifications for significant price changes
+              on
+              <span id="alert-selected-stock" class="font-bold text-white"
+                >your selected stock</span
+              >.
+            </p>
+
+            <div class="mb-6">
+              <label
+                for="phone"
+                class="block text-base font-medium text-gray-200 mb-2 md:text-lg"
+                >Phone Number for Alerts (e.g., +91...):</label
+              >
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                placeholder="Enter your mobile number(with country code)"
+                class="input-field w-96"
+                autocomplete="off"
+                required
+              />
+              <p class="text-xs text-gray-400 mt-2">
+                Enter your full international phone number with country code.
+              </p>
+            </div>
+
+            <div
+              id="alertStatus"
+              class="mt-4 hidden text-center animate-fadeIn font-semibold alert-status-message"
+            ></div>
+
+            <button type="submit" class="btn-base btn-accent w-full" disabled>
+              <i class="fas fa-bell mr-2"></i> Set Alert
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="alertModal" class="modal hidden">
+      <div class="modal-content">
+        <button class="modal-close-button" onclick="closeAlertModal()">
+          &times;
+        </button>
+        <div class="text-green-500 text-6xl mb-4">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Alert Set!</h2>
+        <p class="text-gray-700 text-lg mb-6">
+          You will be notified of significant price changes for
+          <span id="modalStockSymbol" class="font-semibold text-blue-600"
+            >...</span
+          >.
+        </p>
+        <button
+          onclick="closeAlertModal()"
+          class="btn-base btn-primary w-full max-w-[200px] mx-auto"
+        >
+          Got it!
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // DOM Elements
+      const stockSelect = document.getElementById("stock-select");
+      const currentSymbolSpan = document.getElementById("current-symbol");
+      const currentCompanySpan = document.getElementById("current-company");
+      const currentPriceSpan = document.getElementById("current-price");
+      const currentStockInfoDiv = document.getElementById("current-stock-info");
+      const currentStockErrorDiv = document.getElementById(
+        "current-stock-error"
+      );
+
+      const forecast6mBtn = document.getElementById("forecast-6m-btn");
+      const forecast5yBtn = document.getElementById("forecast-5y-btn");
+      const loadingIndicator = document.getElementById("loading-indicator");
+      const forecastErrorDiv = document.getElementById("forecast-error");
+      const forecastErrorMessage = document.getElementById(
+        "forecast-error-message"
+      );
+      const forecastResultsDiv = document.getElementById("forecast-results");
+      const forecastTableBody = document.getElementById("forecast-table-body");
+      const forecastPlot = document.getElementById("forecast-plot");
+      const plotError = document.getElementById("plot-error");
+
+      // Elements for Alert handling
+      const alertForm = document.getElementById("alert-form");
+      const alertStockSymbolInput =
+        document.getElementById("alert-stock-symbol");
+      const alertSelectedStockSpan = document.getElementById(
+        "alert-selected-stock"
+      );
+      const phoneInput = document.getElementById("phone");
+      const setAlertButton = alertForm.querySelector("button[type='submit']");
+      const alertStatusDiv = document.getElementById("alertStatus");
+      const alertModal = document.getElementById("alertModal");
+      const modalStockSymbol = document.getElementById("modalStockSymbol");
+
+      // Layout elements for responsiveness
+      const mainGrid = document.querySelector(".main-grid");
+
+      let selectedStockSymbol = "";
+      // Initialize currentStockPrice to null or 0, it will be updated when stock info is fetched.
+      let currentStockPrice = 0;
+
+      // --- Functions for UI Updates ---
+      function toggleForecastButtons(enable) {
+        forecast6mBtn.disabled = !enable;
+        forecast5yBtn.disabled = !enable;
+      }
+
+      function toggleAlertButton(enable) {
+        setAlertButton.disabled = !enable;
+      }
+
+      function displayAlertStatus(message, type, targetDiv = alertStatusDiv) {
+        targetDiv.innerHTML = message;
+        let typeClass = "";
+        switch (type) {
+          case "success":
+            typeClass = "alert-success";
+            break;
+          case "error":
+            typeClass = "alert-error";
+            break;
+          case "loading":
+            typeClass = "alert-loading";
+            break;
+          case "info":
+          default:
+            typeClass = "alert-info";
+            break;
+        }
+        // Ensure only one type class is active
+        targetDiv.className = `mt-4 text-center animate-fadeIn font-semibold alert-status-message ${typeClass}`;
+        targetDiv.classList.remove("hidden");
+
+        // Auto-hide messages, except for loading and success (which is handled by modal)
+        if (type === "error" || type === "info") {
+          // Only hide error and info messages
+          setTimeout(() => {
+            targetDiv.classList.add("hidden");
+          }, 5000);
+        }
+      }
+
+      function openAlertModal(stockSymbol) {
+        modalStockSymbol.textContent = stockSymbol;
+        alertModal.classList.add("show");
+        alertModal.classList.remove("hidden");
+        phoneInput.value = ""; // Clear phone input after successful alert set
+        alertStatusDiv.classList.add("hidden"); // Hide the inline status message when modal opens
+      }
+
+      function closeAlertModal() {
+        alertModal.classList.remove("show");
+        setTimeout(() => {
+          alertModal.classList.add("hidden");
+          alertStatusDiv.classList.add("hidden"); // Also hide the alert status div
+        }, 300);
+      }
+
+      // --- Responsive Layout Logic ---
+      function adjustLayout() {
+        // This function remains unchanged as per previous guidance
+      }
+
+      // --- Event Listeners ---
+
+      stockSelect.addEventListener("change", async function () {
+        selectedStockSymbol = this.value;
+        currentStockInfoDiv.classList.add("hidden");
+        currentStockErrorDiv.classList.add("hidden");
+        forecastResultsDiv.classList.add("hidden");
+        forecastResultsDiv.classList.remove("animate-fadeIn"); // Remove for re-animation
+        forecastErrorDiv.classList.add("hidden");
+        loadingIndicator.classList.add("hidden");
+        toggleForecastButtons(false);
+        toggleAlertButton(false);
+        alertStatusDiv.classList.add("hidden"); // Clear alert status on stock change
+
+        if (selectedStockSymbol) {
+          alertSelectedStockSpan.textContent = ` ${selectedStockSymbol}`;
+          alertStockSymbolInput.value = selectedStockSymbol;
+        } else {
+          alertSelectedStockSpan.textContent = "your selected stock";
+          alertStockSymbolInput.value = "";
+        }
+
+        if (selectedStockSymbol) {
+          try {
+            const response = await fetch(
+              `/get_current_stock_info?symbol=${selectedStockSymbol}`
+            );
+            const data = await response.json();
+
+            if (response.ok) {
+              currentSymbolSpan.textContent = data.symbol;
+              currentCompanySpan.textContent = data.company_name;
+              currentPriceSpan.textContent = parseFloat(
+                data.current_price
+              ).toFixed(2);
+              // Store the current price globally so forecast can use it
+              currentStockPrice = parseFloat(data.current_price);
+              currentStockInfoDiv.classList.remove("hidden");
+              currentStockInfoDiv.classList.add("animate-fadeIn"); // Animate in
+              toggleForecastButtons(true);
+              toggleAlertButton(true);
+            } else {
+              currentStockErrorDiv.innerHTML = `<i class="fas fa-exclamation-triangle mr-2"></i> ${
+                data.error || "Could not fetch current stock information."
+              }`;
+              currentStockErrorDiv.classList.remove("hidden");
+              currentStockErrorDiv.classList.add("animate-fadeIn");
+              currentStockPrice = 0; // Reset price on error
+            }
+          } catch (error) {
+            console.error("Error fetching current stock info:", error);
+            currentStockErrorDiv.innerHTML = `<i class="fas fa-exclamation-triangle mr-2"></i> Failed to fetch current stock info. Please check your network.`;
+            currentStockErrorDiv.classList.remove("hidden");
+            currentStockErrorDiv.classList.add("animate-fadeIn");
+            currentStockPrice = 0; // Reset price on error
+          }
+        }
+      });
+
+      forecast6mBtn.addEventListener("click", () => fetchForecast("6m"));
+      forecast5yBtn.addEventListener("click", () => fetchForecast("5y"));
+
+      async function fetchForecast(forecastType) {
+        if (!selectedStockSymbol) {
+          forecastErrorMessage.textContent = "Please select a stock first.";
+          forecastErrorDiv.classList.remove("hidden");
+          forecastErrorDiv.classList.add("animate-fadeIn");
+          return;
+        }
+
+        // Ensure currentStockPrice is available and valid before proceeding
+        if (currentStockPrice === 0 || isNaN(currentStockPrice)) {
+          forecastErrorMessage.textContent =
+            "Cannot generate forecast: Current stock price not available or invalid.";
+          forecastErrorDiv.classList.remove("hidden");
+          forecastErrorDiv.classList.add("animate-fadeIn");
+          return;
+        }
+
+        forecastResultsDiv.classList.add("hidden");
+        forecastResultsDiv.classList.remove("animate-fadeIn");
+        forecastErrorDiv.classList.add("hidden");
+        loadingIndicator.classList.remove("hidden");
+        loadingIndicator.classList.add("animate-fadeIn");
+        toggleForecastButtons(false);
+
+        try {
+          const response = await fetch(
+            `/get_forecast?symbol=${selectedStockSymbol}&forecast_type=${forecastType}`
+          );
+          const data = await response.json();
+
+          if (response.ok) {
+            forecastTableBody.innerHTML = "";
+            plotError.classList.add("hidden");
+
+            // Use the globally stored currentStockPrice as the base for comparison
+            // Ensure data.current_price is not accidentally used if it's not provided by forecast endpoint
+            const basePriceForComparison = currentStockPrice;
+
+            data.yhat.forEach((predictedPrice, index) => {
+              const row = forecastTableBody.insertRow();
+              const date = data.dates[index];
+              const yhat_lower = data.yhat_lower[index];
+              const yhat_upper = data.yhat_upper[index];
+
+              let priceClass = "";
+              // Apply green if predicted is higher, red if lower, default if same
+              if (predictedPrice > basePriceForComparison) {
+                priceClass = "text-green-600 font-semibold";
+              } else if (predictedPrice < basePriceForComparison) {
+                priceClass = "text-red-600 font-semibold";
+              } else {
+                priceClass = "text-gray-800"; // Or no specific color if exactly the same
+              }
+
+              row.innerHTML = `
+                <td class="py-2 px-4 border-b border-gray-200">${date}</td>
+                <td class="py-2 px-4 border-b border-gray-200 ${priceClass}">$${predictedPrice.toFixed(
+                2
+              )}</td>
+                <td class="py-2 px-4 border-b border-gray-200">$${yhat_lower.toFixed(
+                  2
+                )}</td>
+                <td class="py-2 px-4 border-b border-gray-200">$${yhat_upper.toFixed(
+                  2
+                )}</td>
+              `;
+            });
+
+            if (data.plot_img) {
+              forecastPlot.src = `data:image/png;base64,${data.plot_img}`;
+              forecastPlot.classList.remove("hidden");
+              // Assuming you have an animate-scaleIn or similar CSS animation
+              // If not, just remove this line or define it.
+              forecastPlot.classList.add("animate-scaleIn");
+              plotError.classList.add("hidden");
+            } else {
+              forecastPlot.classList.add("hidden");
+              plotError.classList.remove("hidden");
+              plotError.classList.add("animate-fadeIn");
+            }
+
+            forecastResultsDiv.classList.remove("hidden");
+            forecastResultsDiv.classList.add("animate-fadeIn");
+          } else {
+            forecastErrorMessage.textContent =
+              data.error || "An unknown error occurred.";
+            forecastErrorDiv.classList.remove("hidden");
+            forecastErrorDiv.classList.add("animate-fadeIn");
+            forecastResultsDiv.classList.add("hidden");
+          }
+        } catch (error) {
+          console.error("Error fetching forecast:", error);
+          forecastErrorMessage.textContent =
+            "Failed to fetch forecast. Please check your network connection or try again later.";
+          forecastErrorDiv.classList.remove("hidden");
+          forecastErrorDiv.classList.add("animate-fadeIn");
+          forecastResultsDiv.classList.add("hidden");
+        } finally {
+          loadingIndicator.classList.add("hidden");
+          toggleForecastButtons(true);
+        }
+      }
+
+      alertForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const stock = alertStockSymbolInput.value;
+        const phone = phoneInput.value;
+
+        if (!stock) {
+          displayAlertStatus("Please select a stock first.", "error");
+          return;
+        }
+        if (!phone) {
+          displayAlertStatus("Please enter your phone number.", "error");
+          return;
+        }
+        if (!/^\+\d{7,15}$/.test(phone)) {
+          displayAlertStatus(
+            "Phone number must start with '+' and include country code (e.g., +91... followed by 7-15 digits).",
+            "error"
+          );
+          return;
+        }
+
+        displayAlertStatus(
+          '<i class="fas fa-spinner fa-spin mr-2"></i> Setting alert...',
+          "loading"
+        );
+        setAlertButton.disabled = true;
+
+        try {
+          const formData = new FormData(alertForm);
+          const response = await fetch("/", {
+            method: "POST",
+            body: formData,
+          });
+
+          let responseData;
+          try {
+            responseData = await response.json();
+          } catch (e) {
+            // If JSON parsing fails, read as text and try to find flash messages
+            const responseHtml = await response.text();
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = responseHtml;
+
+            const successFlash = tempDiv.querySelector(
+              ".flash-message.flash-success"
+            );
+            const errorFlash = tempDiv.querySelector(
+              ".flash-message.flash-error"
+            );
+
+            if (successFlash) {
+              displayAlertStatus(successFlash.textContent.trim(), "success");
+              openAlertModal(stock);
+              return; // Exit after handling flash message
+            } else if (errorFlash) {
+              displayAlertStatus(errorFlash.textContent.trim(), "error");
+              return; // Exit after handling flash message
+            }
+            // If no specific flash message found, proceed with generic error
+            throw new Error(
+              "Unexpected server response format or no flash message."
+            );
+          }
+
+          if (response.ok && responseData.message) {
+            // This path is for successful JSON responses
+            displayAlertStatus(
+              `<i class="fas fa-check-circle mr-2"></i> You will be notified!`,
+              "success"
+            );
+            openAlertModal(stock);
+          } else if (responseData.error) {
+            // This path is for error messages in JSON responses
+            displayAlertStatus(
+              `<i class="fas fa-times-circle mr-2"></i> ${responseData.error}`,
+              "error"
+            );
+          } else {
+            // Generic error for unexpected JSON responses
+            displayAlertStatus(
+              "An unexpected response was received from the server while setting the alert.",
+              "error"
+            );
+          }
+        } catch (error) {
+          console.error("Network or submission error:", error);
+          displayAlertStatus(
+            `<i class="fas fa-times-circle mr-2"></i> Failed to set alert. Please check your network and try again.`,
+            "error"
+          );
+        } finally {
+          setAlertButton.disabled = false;
+        }
+      });
+
+      // Initialize state on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        // Handle global flash messages
+        const flashMessages = document.querySelectorAll(".flash-message");
+        if (flashMessages.length > 0) {
+          flashMessages.forEach((msg) => {
+            msg.addEventListener(
+              "animationend",
+              () => {
+                msg.classList.remove("animate-fadeIn");
+              },
+              { once: true }
+            );
+          });
+          setTimeout(() => {
+            flashMessages.forEach((msg) => msg.remove());
+          }, 5000);
+        }
+        adjustLayout(); // Initial layout adjustment
+      });
+
+      window.addEventListener("resize", adjustLayout);
+    </script>
+  </body>
+</html>
