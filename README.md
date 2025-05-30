@@ -20,11 +20,45 @@ This Flask-based web application allows users to select a US stock out of S&P 50
   - Modular code for forecasting and visualization.
 
 ## 🛠 Tech Stack
+👨‍💻 Backend
+Python 3.x
 
-- **Backend**: Flask (Python)
-- **Data & Forecasting**: Pandas, NumPy, Prophet
-- **API Integration**: Polygon.io, Twilio
-- **Plotting**: Matplotlib (rendered server-side)
+Flask – Lightweight Python web framework for routing, templates, and API handling.
+
+🧠 Forecasting & Data Processing
+Pandas – For structured data manipulation and analysis.
+
+Prophet – Facebook’s time-series forecasting model (for 6-month and 5-year predictions).
+
+NumPy – Numerical operations used internally within forecasting.
+
+📊 Plotting
+Matplotlib – Server-side graph generation for forecast visualization (sent to frontend as base64 images).
+
+🗃 Database
+MySQL – Stores user alerts (stock symbol + phone number).
+
+mysql-connector-python – Used to connect Flask with the MySQL database.
+
+📦 API Integrations
+Polygon.io API – For real-time stock data (prices, ticker info).
+
+Twilio API – To send SMS/WhatsApp stock alerts to users.
+
+(Optional/Extendable: NewsAPI) – For related stock market news integration.
+
+📁 Data Source
+companies.csv – Static CSV file containing company names and stock symbols.
+
+🌐 Frontend
+HTML5 + CSS3 – Rendered using Flask’s Jinja2 template engine.
+
+JavaScript + AJAX – For dynamic UI interactions (e.g., fetching stock info or forecast without reloading).
+
+🔐 Security & Configuration
+Environment Variables – For storing secrets (e.g., DB credentials, API keys).
+
+Flask Secret Key – For session and CSRF protection.
 
 ## Working Video
 
