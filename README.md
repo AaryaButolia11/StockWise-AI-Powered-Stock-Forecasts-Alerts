@@ -13,6 +13,7 @@ This Flask-based web application allows users to select a US stock, enter their 
   
 - 🌐 **Data Source**:
   - Uses [Polygon.io](https://polygon.io/) for 5 years of historical stock data.
+  - Uses Vantage News API to take real-time data of current stock value.
 
 - 📥 **Clean, production-ready architecture**:
   - Uses environment variables for sensitive keys.
