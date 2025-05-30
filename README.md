@@ -55,6 +55,15 @@ https://github.com/user-attachments/assets/59d82a63-b9d5-46f2-91a2-110610fb9ee0
 ![WhatsApp Image 2025-05-30 at 17 27 11_242a6d0b](https://github.com/user-attachments/assets/fc1cdf6b-0030-4eb8-b09e-dffb66ef3d86)
 
 
+##@ Database Creation in MySQL
+
+![WhatsApp Image 2025-05-30 at 13 46 00_41aba738](https://github.com/user-attachments/assets/a03de476-1ea7-4487-81e2-08745e54afe4)
+
+### Data added to DB on sending SMS
+
+![image](https://github.com/user-attachments/assets/197d322b-a182-4fb5-b51b-f20b3cb3f323)
+
+
 
 <!-- Replace with actual image if hosted -->
 
