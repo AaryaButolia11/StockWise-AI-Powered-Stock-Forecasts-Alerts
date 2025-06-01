@@ -90,13 +90,33 @@ def index():
         if not stock_symbol or not phone_number:
             return jsonify({'error': 'Stock symbol and phone number are required.'}), 400
 
-        try:
-            print(f"Simulating SMS sent for {stock_symbol} to {phone_number}")
+        # You'll need the company name here to pass to send_stock_news_alert
+        # Find company name from your 'companies' list loaded in app.py
+        company_name = next((comp_name for sym, comp_name in companies if sym == stock_symbol), stock_symbol)
 
+
+        try:
+            # First, attempt to send a confirmation SMS that the alert is set
+            confirmation_sent = send_alert_sms(phone_number, f"StockWise Alert for {stock_symbol}: Your alert has been set. You will be notified of significant price changes and news.")
+            if not confirmation_sent:
+                print(f"Failed to send initial confirmation SMS for {stock_symbol} to {phone_number}")
+                # Decide if you want to abort or proceed saving to DB even if confirmation failed
+                # For this example, we'll continue to save to DB
+            else:
+                 print(f"Confirmation SMS sent for {stock_symbol} to {phone_number}")
+
+            # Then, save to DB regardless of initial SMS success (you might want to adjust this logic)
             if save_user_alert_to_db(stock_symbol, phone_number):
+                # Optionally, trigger the news alert check immediately after setting
+                # This will check prices and news right away and send if criteria met
+                # You could run this in a separate thread if it's too long-running for a web request
+                # For simplicity, calling it directly here.
+                send_stock_news_alert(stock_symbol, company_name, phone_number, threshold_percent=1) # Set your desired threshold
+
                 return jsonify({'message': 'Alert set successfully!', 'status': 'success'}), 200
             else:
-                return jsonify({'error': 'Alert sent, but failed to record in database.'}), 500
+                return jsonify({'error': 'Alert sent, but failed to record in database. Please contact support.'}), 500
+
         except Exception as e:
             print(f"Error processing alert: {e}")
             return jsonify({'error': f'Failed to set alert: {str(e)}'}), 500
