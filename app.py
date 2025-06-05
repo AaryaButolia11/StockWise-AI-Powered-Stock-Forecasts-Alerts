@@ -1,3 +1,4 @@
+# main python file for str of web
 # app.py
 from flask import Flask, render_template, request, jsonify
 import os
