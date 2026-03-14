@@ -166,31 +166,31 @@ Visit http://127.0.0.1:5000 in your browser.
 ## 🔍 How the Forecasting Model Works
 The core forecasting functionality in this project leverages historical stock data from Polygon.io, which provides daily price data for the selected stock over the last 5 years.
 
-Workflow:
-Data Fetching:
+### Workflow:
+#### Data Fetching:
 The app fetches daily historical closing prices for the chosen stock symbol using the Polygon.io API.
 
-Data Preparation:
+#### Data Preparation:
 The raw API data is processed into a DataFrame with two columns:
 
 ds: The date (timestamp) of the price
 
 y: The closing stock price on that date
 
-Model Training:
+#### Model Training:
 Using the cleaned data, the Prophet forecasting model is trained. Prophet is designed to handle time series data with strong seasonal effects and several seasons of historical data.
 
-Forecast Generation:
+#### Forecast Generation:
 The trained model predicts future prices for either:
 
 The next 6 months (daily predictions aggregated to monthly averages) or
 
 The next 5 years (daily predictions aggregated to yearly averages)
 
-Aggregation:
+#### Aggregation:
 Since Prophet forecasts daily data (including weekends), the predictions are filtered to exclude weekends and then averaged to smooth out the data into monthly or yearly values, which are easier to interpret.
 
-Visualization:
+#### Visualization:
 The aggregated forecast data is plotted using Matplotlib, showing the predicted stock prices along with confidence intervals (uncertainty bounds) to give a sense of prediction reliability.
 
 
