@@ -19,7 +19,7 @@ warnings.filterwarnings("ignore")
 from prophet import Prophet
 
 # --- Read API key from environment variable ---
-POLYGON_API_KEY = os.getenv("POLYGON_API_KEY")
+POLYGON_API_KEY = os.getenv("POLYGON_API_KEY")  #This reads your Polygon API key from environment variables for security instead of hardcoding it.
 # ------------------------------------------------
 
 def fetch_polygon_data(symbol):
@@ -42,7 +42,7 @@ def fetch_polygon_data(symbol):
     data = res.json().get("results", [])
     if not data:
         return None
-    df = pd.DataFrame(data)
+    df = pd.DataFrame(data) #converting json to data frame for python using pandas
     df['t'] = pd.to_datetime(df['t'], unit='ms')
     df.rename(columns={'t': 'ds', 'c': 'y'}, inplace=True)  # ds for date, y for close price
     return df[['ds', 'y']]
@@ -60,10 +60,10 @@ def get_aggregated_forecast(symbol, forecast_type='6m'):
     df = df.sort_values('ds').reset_index(drop=True)
 
     model = Prophet(
-        seasonality_mode='multiplicative',
+        seasonality_mode='multiplicative', #seasonal effect grows with price
         daily_seasonality=False,
-        weekly_seasonality=True,
-        yearly_seasonality=True
+        weekly_seasonality=True, #trading patterns by week
+        yearly_seasonality=True  #long-term market patterns
     )
     model.fit(df)
 
@@ -82,6 +82,12 @@ def get_aggregated_forecast(symbol, forecast_type='6m'):
             print(f"DEBUG: Only {len(agg)} months generated for 6m forecast. Extending if possible.")
 
         return agg[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
+        # | Column     | Meaning          |
+        # | ---------- | ---------------- |
+        # | yhat       | predicted price  |
+        # | yhat_lower | lower confidence |
+        # | yhat_upper | upper confidence |
+
 
     elif forecast_type == '5y':
         future = model.make_future_dataframe(periods=30 * 365, freq='D')
@@ -138,4 +144,5 @@ def generate_stock_plot(symbol, forecast_type='6m'):
     plt.savefig(buf, format='png')
     plt.close()
     buf.seek(0)
-    return base64.b64encode(buf.read()).decode('utf-8')
+    return base64.b64encode(buf.read()).decode('utf-8')  #directly embedded in HTML
+ 
