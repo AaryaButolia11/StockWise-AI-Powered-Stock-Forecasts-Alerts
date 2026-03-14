@@ -227,7 +227,9 @@ Confidence Intervals: Prophet computes lower and upper bounds of the forecast, r
 
  Improve mobile responsiveness
 
- Add stock buying and auto-sale feature.
+ Add stock buying and auto-sell feature.
+
+ Use LSTM for prediction.
 
 ## 🤝 Contributing
 Pull requests are welcome! Please fork the repository and open a PR with enhancements or bug fixes.
